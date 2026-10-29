@@ -1,0 +1,492 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recycling Project: Phrasal Verb Mission</title>
+<style>
+:root {
+  --green:#24734d;
+  --green2:#e8f5ed;
+  --ink:#20312a;
+  --muted:#5e7067;
+  --line:#d7e5dc;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  background:#f2f7f3;
+  color:var(--ink);
+  font-family:Arial,Helvetica,sans-serif;
+  line-height:1.5;
+}
+.app { max-width:920px; margin:auto; padding:20px 16px 42px; }
+header {
+  background:linear-gradient(135deg,#195d3d,#2d8b5b);
+  color:white;
+  padding:25px;
+  border-radius:20px;
+}
+.eyebrow { text-transform:uppercase; letter-spacing:.12em; font-size:.75rem; }
+h1 { margin:6px 0 8px; font-size:clamp(1.7rem,4vw,2.4rem); line-height:1.15; }
+header p { margin:0; color:#eaf8ef; }
+.topline { display:flex; gap:12px; flex-wrap:wrap; margin-top:18px; }
+.pill { border:1px solid #ffffff66; padding:6px 10px; border-radius:99px; font-size:.85rem; }
+.progress-wrap { margin:18px 0 20px; }
+.progress-label { display:flex; justify-content:space-between; font-size:.88rem; color:var(--muted); margin-bottom:7px; }
+.progress { height:9px; background:#dce8df; border-radius:99px; overflow:hidden; }
+.progress div { width:0; height:100%; background:var(--green); transition:width .25s; }
+.panel { background:white; border:1px solid var(--line); border-radius:18px; padding:22px; }
+.panel + .panel { margin-top:16px; }
+h2 { font-size:1.35rem; margin:0 0 8px; }
+h3 { font-size:1.05rem; margin:0 0 7px; }
+.sub { color:var(--muted); margin:0 0 18px; }
+.story { background:#f5faf6; border-left:4px solid var(--green); padding:15px 16px; border-radius:8px; margin:16px 0; }
+.story p { margin:0; }
+.target-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+.target { padding:12px; border:1px solid var(--line); border-radius:12px; }
+.target strong { display:block; color:var(--green); }
+.target span { color:var(--muted); font-size:.9rem; }
+.btn { border:0; border-radius:11px; padding:12px 17px; background:var(--green); color:white; font-weight:700; cursor:pointer; font-size:.96rem; }
+.btn.secondary { background:#e8f1eb; color:var(--green); border:1px solid #cfe1d5; }
+.btn:disabled { opacity:.45; cursor:not-allowed; }
+.actions { display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-top:20px; }
+.question-count { font-size:.85rem; font-weight:700; color:var(--muted); margin-bottom:10px; }
+.question { font-size:1.18rem; font-weight:700; margin:0 0 14px; }
+.choices { display:grid; gap:9px; }
+.choice { text-align:left; background:white; border:1.5px solid var(--line); padding:13px 14px; border-radius:12px; cursor:pointer; color:var(--ink); font-size:1rem; }
+.choice.selected { border-color:var(--green); background:var(--green2); }
+.choice.correct { border-color:#2b8a57; background:#e5f7eb; }
+.choice.incorrect { border-color:#c75c52; background:#fff0ee; }
+.feedback { margin-top:14px; padding:12px 14px; border-radius:11px; display:none; }
+.feedback.show { display:block; }
+.feedback.good { background:#e8f7ed; color:#1b663e; }
+.feedback.try { background:#fff3e5; color:#7a4a12; }
+.muted { color:var(--muted); }
+.sentence { font-size:1.1rem; line-height:1.9; }
+select,input[type="text"] { border:1.5px solid #b8cec0; border-radius:8px; padding:8px 10px; font-size:1rem; color:var(--ink); background:white; max-width:100%; }
+select { min-width:170px; }
+.matching { display:grid; gap:12px; }
+.match-row { display:grid; grid-template-columns:1fr 1.1fr; align-items:center; gap:12px; border:1px solid var(--line); padding:12px; border-radius:12px; }
+.match-row strong { color:var(--green); }
+.note { background:#fff8e9; border:1px solid #f1dfb7; border-radius:12px; padding:12px 14px; color:#6f501d; font-size:.92rem; }
+.result-score { font-size:2.6rem; font-weight:800; color:var(--green); margin:5px 0; }
+.result-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:16px 0; }
+.stat { padding:14px; background:#f5faf6; border-radius:12px; text-align:center; }
+.stat strong { display:block; font-size:1.3rem; }
+.small { font-size:.87rem; }
+footer { text-align:center; color:#718178; font-size:.8rem; padding:18px 0 0; }
+.hidden { display:none !important; }
+@media(max-width:600px) {
+  .app { padding:12px 10px 28px; }
+  header,.panel { padding:18px; border-radius:15px; }
+  .target-list,.result-grid { grid-template-columns:1fr; }
+  .match-row { grid-template-columns:1fr; gap:7px; }
+  .sentence { font-size:1rem; }
+}
+@media print {
+  body { background:white; }
+  .btn,.progress-wrap,footer { display:none !important; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="eyebrow">English Mission · Grade 8 · A2–B1</div>
+  <h1>♻️ Recycling Project<br>Phrasal Verb Mission</h1>
+  <p>Learn six useful expressions and use them to help your school recycling team.</p>
+  <div class="topline">
+    <span class="pill">⏱ About 10 minutes</span>
+    <span class="pill">🎯 6 target expressions</span>
+    <span class="pill">📍 Individual practice</span>
+  </div>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-label">
+    <span id="stageLabel">Stage 1 of 3 · Learn</span>
+    <span id="progressLabel">0% complete</span>
+  </div>
+  <div class="progress"><div id="progressBar"></div></div>
+</div>
+
+<main>
+<section class="panel" id="intro">
+  <h2>Mission briefing</h2>
+  <p class="sub">Read the story, then complete three quick missions.</p>
+  <div class="story">
+    <p>A group of students wanted to <b>find out</b> how much waste their school produced each day. They decided to <b>set up</b> recycling boxes for paper and plastic. They also asked classmates to <b>sort out</b> their waste carefully. At first, many students did not <b>pay attention to</b> the recycling signs, so the team <b>came up with</b> a simple points game. With more students joining the project, the team was able to <b>carry out</b> the plan for an entire month.</p>
+  </div>
+  <h3>Six expressions to know</h3>
+  <div class="target-list">
+    <div class="target"><strong>1. find out</strong><span>learn or discover information · 알아내다</span></div>
+    <div class="target"><strong>2. set up</strong><span>start or arrange something · 설치하다, 마련하다</span></div>
+    <div class="target"><strong>3. sort out</strong><span>separate things into groups · 분류하다</span></div>
+    <div class="target"><strong>4. pay attention to</strong><span>look or listen carefully at · 주의를 기울이다</span></div>
+    <div class="target"><strong>5. come up with</strong><span>think of an idea or plan · 생각해 내다</span></div>
+    <div class="target"><strong>6. carry out</strong><span>do or complete a plan · 실행하다</span></div>
+  </div>
+  <div class="note" style="margin-top:16px"><b>Tip:</b> Focus on the meaning of the whole expression, not each word separately.</div>
+  <div class="actions">
+    <span class="muted small">Stage 1 · Learn (about 2 minutes)</span>
+    <button class="btn" id="startBtn">Start Mission 1 →</button>
+  </div>
+</section>
+
+<section class="panel hidden" id="quiz">
+  <div class="question-count" id="quizCount"></div>
+  <h2>Choose the best expression</h2>
+  <p class="sub">Read the situation and choose the expression that fits best.</p>
+  <p class="question" id="quizQuestion"></p>
+  <div class="choices" id="quizChoices"></div>
+  <div class="feedback" id="quizFeedback" role="status" aria-live="polite"></div>
+  <div class="actions">
+    <span class="muted small" id="quizScore">Score: 0 / 6</span>
+    <button class="btn" id="quizNext" disabled>Next question →</button>
+  </div>
+</section>
+
+<section class="panel hidden" id="complete">
+  <h2>Mission 1 complete!</h2>
+  <p id="quizSummary" class="sub"></p>
+  <div class="note">Now use the expressions in sentences.</div>
+  <div class="actions">
+    <button class="btn secondary" id="reviewBtn">Review expressions</button>
+    <button class="btn" id="toFillBtn">Start Mission 2 →</button>
+  </div>
+</section>
+
+<section class="panel hidden" id="fill">
+  <div class="question-count">MISSION 2 · USE IT IN CONTEXT</div>
+  <h2>Complete the recycling plan</h2>
+  <p class="sub">Choose an expression for each sentence. Each expression is used once.</p>
+  <div class="matching" id="fillQuestions">
+    <div class="match-row"><div><strong>1.</strong> We want to ______ how much plastic our class throws away.</div><select data-answer="find out" aria-label="Sentence 1"><option value="">Choose...</option></select></div>
+    <div class="match-row"><div><strong>2.</strong> The students will ______ three recycling boxes near the door.</div><select data-answer="set up" aria-label="Sentence 2"><option value="">Choose...</option></select></div>
+    <div class="match-row"><div><strong>3.</strong> Please ______ paper, plastic, and food waste.</div><select data-answer="sort out" aria-label="Sentence 3"><option value="">Choose...</option></select></div>
+    <div class="match-row"><div><strong>4.</strong> Everyone should ______ the recycling instructions.</div><select data-answer="pay attention to" aria-label="Sentence 4"><option value="">Choose...</option></select></div>
+    <div class="match-row"><div><strong>5.</strong> Our group needs to ______ a fun way to encourage students.</div><select data-answer="come up with" aria-label="Sentence 5"><option value="">Choose...</option></select></div>
+    <div class="match-row"><div><strong>6.</strong> We will ______ our plan for four weeks.</div><select data-answer="carry out" aria-label="Sentence 6"><option value="">Choose...</option></select></div>
+  </div>
+  <div class="feedback" id="fillFeedback" role="status" aria-live="polite"></div>
+  <div class="actions">
+    <span class="muted small">Stage 2 · Practice (about 4 minutes)</span>
+    <button class="btn" id="checkFillBtn">Check answers</button>
+  </div>
+  <div class="actions hidden" id="fillContinue">
+    <span class="muted small" id="fillScore"></span>
+    <button class="btn" id="toCreateBtn">Start Mission 3 →</button>
+  </div>
+</section>
+
+<section class="panel hidden" id="create">
+  <div class="question-count">MISSION 3 · YOUR TURN</div>
+  <h2>Make your own recycling sentence</h2>
+  <p class="sub">Choose one expression and write a sentence about a school or home project.</p>
+  <label for="expressionSelect"><b>Target expression</b></label><br>
+  <select id="expressionSelect" style="margin:8px 0 14px">
+    <option value="find out">find out</option>
+    <option value="set up">set up</option>
+    <option value="sort out">sort out</option>
+    <option value="pay attention to">pay attention to</option>
+    <option value="come up with">come up with</option>
+    <option value="carry out">carry out</option>
+  </select>
+  <label for="ownSentence"><b>Write your sentence in English</b></label>
+  <input id="ownSentence" type="text" placeholder="Example: We will set up a box for paper." style="width:100%;margin:8px 0 10px">
+  <p class="small muted">Helpful starters: “I want to…”, “Our class can…”, “We should…”</p>
+  <div class="note">Self-check: Does your sentence show the meaning of the expression? For example, “pay attention to the signs.”</div>
+  <div class="feedback" id="createFeedback" role="status" aria-live="polite"></div>
+  <div class="actions">
+    <span class="muted small">Stage 3 · Create (about 3 minutes)</span>
+    <button class="btn" id="finishBtn">Finish activity</button>
+  </div>
+</section>
+
+<section class="panel hidden" id="results">
+  <h2>Mission complete! 🌱</h2>
+  <p class="sub">Review your score and one thing you learned.</p>
+  <div class="result-score" id="finalScore">0 / 12</div>
+  <p id="finalMessage"></p>
+  <div class="result-grid">
+    <div class="stat"><strong id="statQuiz">0 / 6</strong><span class="small muted">Mission 1 · Meaning</span></div>
+    <div class="stat"><strong id="statFill">0 / 6</strong><span class="small muted">Mission 2 · Context</span></div>
+    <div class="stat"><strong id="statSentence">—</strong><span class="small muted">Mission 3 · Your sentence</span></div>
+  </div>
+  <h3>Quick review</h3>
+  <div class="target-list">
+    <div class="target"><strong>find out</strong><span>discover information</span></div>
+    <div class="target"><strong>set up</strong><span>start or arrange something</span></div>
+    <div class="target"><strong>sort out</strong><span>separate into groups</span></div>
+    <div class="target"><strong>pay attention to</strong><span>look or listen carefully to</span></div>
+    <div class="target"><strong>come up with</strong><span>think of an idea</span></div>
+    <div class="target"><strong>carry out</strong><span>do a plan</span></div>
+  </div>
+  <div class="story"><b>Exit ticket:</b> Which expression will you try to use in your next English class?</div>
+  <div class="actions">
+    <button class="btn secondary" id="restartBtn">Restart activity ↻</button>
+    <button class="btn" id="printBtn">Print / Save results</button>
+  </div>
+</section>
+</main>
+<footer>Designed for individual 10-minute practice · Starting a Recycling Project</footer>
+</div>
+
+<script>
+(() => {
+  const expressions = [
+    "find out","set up","sort out",
+    "pay attention to","come up with","carry out"
+  ];
+  const quizData = [
+    {
+      q:"Your class wants to learn how much rubbish it makes each day. What should you do?",
+      options:["find out","set up","carry out"],
+      answer:"find out",
+      why:"Find out means to discover or learn information."
+    },
+    {
+      q:"You put new boxes in the hallway for paper and plastic. You…",
+      options:["sort out","set up","come up with"],
+      answer:"set up",
+      why:"Set up means to start, arrange, or install something."
+    },
+    {
+      q:"You put paper in one box and plastic in another. You…",
+      options:["carry out","pay attention to","sort out"],
+      answer:"sort out",
+      why:"Sort out means to separate things into groups."
+    },
+    {
+      q:"The teacher says, “Read the recycling signs carefully.” You should…",
+      options:["pay attention to","find out","set up"],
+      answer:"pay attention to",
+      why:"Pay attention to means to look or listen carefully to something."
+    },
+    {
+      q:"Your group thinks of a new points game to motivate students. You…",
+      options:["come up with","sort out","carry out"],
+      answer:"come up with",
+      why:"Come up with means to think of an idea or plan."
+    },
+    {
+      q:"Your team follows its recycling plan for a whole month. You…",
+      options:["find out","carry out","pay attention to"],
+      answer:"carry out",
+      why:"Carry out means to do or complete a plan."
+    }
+  ];
+
+  const $ = id => document.getElementById(id);
+  const panels = ["intro","quiz","complete","fill","create","results"];
+  let quizIndex=0, quizScore=0, fillScore=0;
+  let quizAnswered=false, fillChecked=false;
+
+  function showPanel(id) {
+    panels.forEach(p => $(p).classList.toggle("hidden",p!==id));
+    const stages = {
+      intro:[1,0,"Stage 1 of 3 · Learn"],
+      quiz:[1,10,"Stage 1 of 3 · Learn"],
+      complete:[1,33,"Stage 1 of 3 · Learn"],
+      fill:[2,40,"Stage 2 of 3 · Practice"],
+      create:[3,75,"Stage 3 of 3 · Create"],
+      results:[3,100,"Complete"]
+    };
+    const [stage,progress,label]=stages[id];
+    $("stageLabel").textContent=label;
+    $("progressLabel").textContent=progress+"% complete";
+    $("progressBar").style.width=progress+"%";
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  function renderQuiz() {
+    const item=quizData[quizIndex];
+    quizAnswered=false;
+    $("quizCount").textContent=`MISSION 1 · QUESTION ${quizIndex+1} OF ${quizData.length}`;
+    $("quizQuestion").textContent=item.q;
+    $("quizChoices").innerHTML="";
+    $("quizFeedback").className="feedback";
+    $("quizFeedback").textContent="";
+    $("quizNext").disabled=true;
+    $("quizNext").textContent=quizIndex===quizData.length-1?"See results →":"Next question →";
+
+    item.options.forEach(opt => {
+      const b=document.createElement("button");
+      b.className="choice";
+      b.type="button";
+      b.textContent=opt;
+      b.addEventListener("click",()=>chooseQuiz(b,opt));
+      $("quizChoices").appendChild(b);
+    });
+    $("quizScore").textContent=`Score: ${quizScore} / ${quizData.length}`;
+  }
+
+  function chooseQuiz(button,choice) {
+    if(quizAnswered) return;
+    quizAnswered=true;
+    const item=quizData[quizIndex];
+    const correct=choice===item.answer;
+    if(correct) quizScore++;
+
+    [...$("quizChoices").children].forEach(b=>{
+      b.disabled=true;
+      if(b.textContent===item.answer) b.classList.add("correct");
+      else if(b===button) b.classList.add("incorrect");
+    });
+
+    $("quizFeedback").className="feedback show "+(correct?"good":"try");
+    $("quizFeedback").textContent=
+      (correct?"Correct! ":"Not quite. The answer is “"+item.answer+". ” ")+item.why;
+    $("quizScore").textContent=`Score: ${quizScore} / ${quizData.length}`;
+    $("quizNext").disabled=false;
+  }
+
+  function fillOptions() {
+    document.querySelectorAll("#fillQuestions select").forEach(sel=>{
+      expressions.forEach(exp=>{
+        const opt=document.createElement("option");
+        opt.value=exp;
+        opt.textContent=exp;
+        sel.appendChild(opt);
+      });
+      sel.addEventListener("change",()=>{
+        if(fillChecked) {
+          fillChecked=false;
+          $("fillFeedback").className="feedback";
+          $("fillContinue").classList.add("hidden");
+          $("checkFillBtn").classList.remove("hidden");
+          document.querySelectorAll("#fillQuestions select").forEach(s=>{
+            s.disabled=false;
+          });
+        }
+      });
+    });
+  }
+
+  $("startBtn").addEventListener("click",()=>{
+    showPanel("quiz");
+    renderQuiz();
+  });
+
+  $("quizNext").addEventListener("click",()=>{
+    if(quizIndex<quizData.length-1) {
+      quizIndex++;
+      renderQuiz();
+    } else {
+      $("quizSummary").textContent=
+        `You answered ${quizScore} out of 6 questions correctly. `+
+        (quizScore>=5?"Excellent work!":"Keep going — practice will help you remember the expressions.");
+      showPanel("complete");
+    }
+  });
+
+  $("reviewBtn").addEventListener("click",()=>showPanel("intro"));
+  $("toFillBtn").addEventListener("click",()=>showPanel("fill"));
+
+  $("checkFillBtn").addEventListener("click",()=>{
+    const selects=[...document.querySelectorAll("#fillQuestions select")];
+    if(!selects.every(s=>s.value!=="")) {
+      $("fillFeedback").className="feedback show try";
+      $("fillFeedback").textContent="Please choose an expression for all six sentences before checking.";
+      return;
+    }
+
+    fillScore=0;
+    selects.forEach(sel=>{
+      const correct=sel.value===sel.dataset.answer;
+      if(correct) fillScore++;
+      sel.style.borderColor=correct?"#2b8a57":"#c75c52";
+      sel.style.background=correct?"#e8f7ed":"#fff0ee";
+      sel.disabled=true;
+
+      const old=sel.parentElement.querySelector(".correction");
+      if(old) old.remove();
+
+      if(!correct) {
+        const correction=document.createElement("div");
+        correction.className="small correction";
+        correction.style.marginTop="4px";
+        correction.textContent="Correct answer: "+sel.dataset.answer;
+        sel.parentElement.appendChild(correction);
+      }
+    });
+
+    fillChecked=true;
+    $("fillFeedback").className="feedback show "+(fillScore===6?"good":"try");
+    $("fillFeedback").textContent=fillScore===6
+      ?"Perfect! All six expressions are used correctly."
+      :`You got ${fillScore} out of 6 correct. Review the correct answers below.`;
+    $("fillScore").textContent=`Score: ${fillScore} / 6`;
+    $("fillContinue").classList.remove("hidden");
+    $("checkFillBtn").classList.add("hidden");
+    $("progressLabel").textContent="70% complete";
+    $("progressBar").style.width="70%";
+  });
+
+  $("toCreateBtn").addEventListener("click",()=>showPanel("create"));
+
+  $("finishBtn").addEventListener("click",()=>{
+    const exp=$("expressionSelect").value;
+    const sentence=$("ownSentence").value.trim();
+
+    if(!sentence) {
+      $("createFeedback").className="feedback show try";
+      $("createFeedback").textContent="Write one sentence before finishing. Try using the expression you selected.";
+      $("ownSentence").focus();
+      return;
+    }
+
+    const hasExpression=sentence.toLowerCase().includes(exp);
+    $("createFeedback").className="feedback show "+(hasExpression?"good":"try");
+    $("createFeedback").textContent=hasExpression
+      ?"Nice work — your sentence includes the target expression. Check that the meaning fits your sentence."
+      :`Good start! Add the exact expression “${exp}” to your sentence, then finish again.`;
+
+    if(!hasExpression) return;
+
+    $("statQuiz").textContent=`${quizScore} / 6`;
+    $("statFill").textContent=`${fillScore} / 6`;
+    $("statSentence").textContent="Done";
+
+    const total=quizScore+fillScore;
+    $("finalScore").textContent=`${total} / 12`;
+    $("finalMessage").textContent=total>=10
+      ?"Excellent understanding! Keep using these expressions in new situations."
+      :total>=7
+      ?"Good effort! Review the expressions you found difficult and try the activity again."
+      :"You have made a start. Review the six meanings and try again to build confidence.";
+
+    showPanel("results");
+  });
+
+  $("restartBtn").addEventListener("click",()=>{
+    quizIndex=0;
+    quizScore=0;
+    fillScore=0;
+    quizAnswered=false;
+    fillChecked=false;
+
+    document.querySelectorAll("#fillQuestions .correction").forEach(el=>el.remove());
+    document.querySelectorAll("#fillQuestions select").forEach(sel=>{
+      sel.value="";
+      sel.disabled=false;
+      sel.style.borderColor="";
+      sel.style.background="white";
+    });
+
+    $("checkFillBtn").classList.remove("hidden");
+    $("fillContinue").classList.add("hidden");
+    $("fillFeedback").className="feedback";
+    $("ownSentence").value="";
+    $("createFeedback").className="feedback";
+    showPanel("intro");
+  });
+
+  $("printBtn").addEventListener("click",()=>window.print());
+  fillOptions();
+})();
+</script>
+</body>
+</html>
